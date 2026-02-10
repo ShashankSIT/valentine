@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Be My Valentine 💖</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <style>
+    body {
+      background: radial-gradient(circle at top, #ffd6e8, #fff);
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .glass {
+      backdrop-filter: blur(14px);
+      background: rgba(255, 255, 255, 0.55);
+      box-shadow: 0 20px 50px rgba(255, 105, 180, 0.25);
+      border-radius: 24px;
+    }
+
+    .bounce {
+		--scale: 1;
+		animation: bounce 1.8s infinite;
+		transform: translateY(var(--bounceY, 0)) scale(var(--scale));
+	}
+
+
+    @keyframes bounce {
+  0%,100% { --bounceY: 0; }
+  50% { --bounceY: -12px; }
+}
+
+
+    .soft-glow {
+      box-shadow: 0 0 30px rgba(255, 105, 180, 0.45);
+    }
+  </style>
+</head>
+
+<body class="flex items-center justify-center">
+
+<main class="glass p-8 max-w-md text-center">
+  <img
+    id="imageDisplay"
+    src="./images/image1.gif"
+    class="rounded-xl h-[280px] mx-auto mb-6 transition-all duration-500"
+    alt="Cute kitten"
+  />
+
+  <h1
+    id="valentineQuestion"
+    class="text-4xl font-extrabold text-pink-600 mb-6"
+  >
+    Will you be my Valentine, Nikita? 💘
+  </h1>
+
+  <div id="responseButtons" class="flex gap-6 justify-center items-center">
+    <button
+      id="yesButton"
+      class="bounce soft-glow bg-pink-500 hover:bg-pink-400 text-white px-6 py-3 rounded-full text-xl font-bold transition-all duration-300"
+    >
+      YES 💖
+    </button>
+
+    <button
+      id="noButton"
+      class="bg-gray-400 hover:bg-gray-500 text-white px-6 py-3 rounded-full text-xl transition-all duration-300"
+    >
+      Go Away 😐
+    </button>
+  </div>
+</main>
+
+<script>
+(() => {
+  const yesBtn = document.getElementById("yesButton");
+  const noBtn = document.getElementById("noButton");
+  const img = document.getElementById("imageDisplay");
+  const text = document.getElementById("valentineQuestion");
+  const buttons = document.getElementById("responseButtons");
+
+  const IMAGE_PATHS_NO = [
+    "./images/image1.gif",
+    "./images/image2.gif",
+    "./images/image3.gif",
+    "./images/image4.gif",
+    "./images/image5.gif",
+    "./images/image6.gif",
+  ];
+
+  const IMAGE_YES = "./images/image7.gif";
+
+  const NO_MESSAGES = [
+    "No 😐",
+    "Are you sure? 🥺",
+    "Pookie please 💔",
+    "Don't do this 😭",
+    "I'm literally begging",
+    "WHY ARE YOU LIKE THIS",
+  ];
+
+  let noClicks = 0;
+  let yesScale = 1;
+  let noScale = 1;
+  let noOpacity = 1;
+
+  noBtn.addEventListener("click", () => {
+    noClicks++;
+
+    // Loop images + text (image7 excluded)
+    const index = noClicks % IMAGE_PATHS_NO.length;
+    img.src = IMAGE_PATHS_NO[index];
+    noBtn.textContent = NO_MESSAGES[noClicks % NO_MESSAGES.length];
+
+    // YES grows
+    yesScale += 0.07;
+	yesBtn.style.setProperty("--scale", yesScale);
+
+    // NO shrinks & fades
+    noScale -= 0.12;
+    noOpacity -= 0.12;
+
+    noBtn.style.transform = `scale(${Math.max(noScale, 0)})`;
+    noBtn.style.opacity = Math.max(noOpacity, 0);
+
+    // Eventually disappear
+    if (noScale <= 0.2 || noOpacity <= 0.2) {
+      noBtn.style.display = "none";
+    }
+  });
+
+  yesBtn.addEventListener("click", () => {
+    img.src = IMAGE_YES;
+    text.textContent = "YAYYY!! I KNEW YOU WOULD SAY YES 😍💘";
+    buttons.style.display = "none";
+
+    const heart = confetti.shapeFromPath({
+      path: "M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+    });
+
+    const defaults = {
+      spread: 360,
+      gravity: 0.4,
+      decay: 0.92,
+      startVelocity: 30,
+      shapes: [heart],
+      colors: ["#ff69b4", "#ff1493", "#ff85c1"]
+    };
+
+    confetti({ ...defaults, particleCount: 80, scalar: 2 });
+    confetti({ ...defaults, particleCount: 40, scalar: 3 });
+  });
+})();
+</script>
+
+</body>
+</html>
